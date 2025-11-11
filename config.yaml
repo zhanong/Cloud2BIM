@@ -1,8 +1,8 @@
-e57_input: false
+e57_input: true
 e57_files:
-  - input_e57/werk_satny_vstup.e57
+  - C:\Users\zhhnl\OneDrive\_DashBoard\_BIMEngine\PointCloud\454 Natoma St - Nov 6\pointcloud_output_e57.e57
 xyz_files:
-  - input_xyz/new_data/ISPR_UO2_1st.xyz
+  - output_xyz/454_Natoma_St.xyz
 dilute: false
 dilution_factor: 10
 exterior_scan: false
@@ -17,21 +17,21 @@ min_wall_thickness: 0.05
 max_wall_thickness: 0.75
 exterior_walls_thickness: 0.3
 
-output_ifc: output_IFC/output-2.ifc
-ifc_project_name: Sample project
-ifc_project_long_name: Deconstruction of non-load-bearing elements
+output_ifc: output_IFC/454_Natoma_St.ifc
+ifc_project_name: 454 Natoma St
+ifc_project_long_name: Point Cloud to BIM Conversion
 ifc_project_version: version 1.0
 
-ifc_author_name: Slavek
-ifc_author_surname: Zbirovsky
-ifc_author_organization: CTU in Prague
+ifc_author_name: User
+ifc_author_surname: Name
+ifc_author_organization: Organization
 
-ifc_building_name: Hotel Opatov
-ifc_building_type: Hotel
-ifc_building_phase: Reconstruction
+ifc_building_name: 454 Natoma St
+ifc_building_type: Building
+ifc_building_phase: As-Built
 
-ifc_site_latitude: [50, 5, 0]
-ifc_site_longitude: [4, 22, 0]
-ifc_site_elevation: 356.0
+ifc_site_latitude: [37, 46, 48]
+ifc_site_longitude: [-122, 24, 36]
+ifc_site_elevation: 0.0
 
 material_for_objects: Concrete

@@ -111,10 +111,17 @@ def read_e57(file_name):
 
 
 def e57_data_to_xyz(e57_data, output_file_name, chunk_size=10000):
+    """
+    Convert E57 point cloud data to XYZ file format.
+    Exports X, Y, Z coordinates and R, G, B colors. Intensity is omitted for consistency.
+    """
     points = e57_data.points
     n_points = points.shape[0]
     colors = e57_data.color
-    intensities = e57_data.intensity
+
+    # Delete existing file to avoid appending to old data
+    if os.path.exists(output_file_name):
+        os.remove(output_file_name)
 
     num_chunks = int((n_points - 1) // chunk_size + 1)  # Compute the number of chunks
 
@@ -128,17 +135,18 @@ def e57_data_to_xyz(e57_data, output_file_name, chunk_size=10000):
         red = colors[:, 0][start:end]
         green = colors[:, 1][start:end]
         blue = colors[:, 2][start:end]
-        intensity = intensities[:, 0][start:end]
 
-        df = pd.DataFrame({'X': x, 'Y': y, 'Z': z, 'R': red, 'G': green, 'B': blue, 'Intensity': intensity})
+        # Create DataFrame without intensity (always 6 columns for consistency)
+        df = pd.DataFrame({'X': x, 'Y': y, 'Z': z, 'R': red, 'G': green, 'B': blue})
+
         # Round the DataFrame entries to 3 decimal places
         df = df.round(3)
 
-        # Check if file exists and is not empty
-        if os.path.exists(output_file_name) and os.path.getsize(output_file_name) > 0:
-            df.to_csv(output_file_name, sep='\t', index=False, header=False, mode='a')
+        # Write header on first chunk, then append data only
+        if i == 0:
+            df.to_csv(output_file_name, sep='\t', index=False, header=True, mode='w')
         else:
-            df.to_csv(output_file_name, sep='\t', index=False, header=True, mode='a')
+            df.to_csv(output_file_name, sep='\t', index=False, header=False, mode='a')
 
 
 def save_xyz(points, output_file_name):

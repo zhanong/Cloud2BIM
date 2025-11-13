@@ -758,6 +758,16 @@ def calculate_wall_axis(group):
     # Calculate the direction of the axis based on the longer segment
     direction = [longer_segment[1][0] - longer_segment[0][0], longer_segment[1][1] - longer_segment[0][1]]
     norm = (direction[0] ** 2 + direction[1] ** 2) ** 0.5
+
+    # Diagnostic logging for invalid direction vectors
+    if norm == 0 or not np.isfinite(norm):
+        print(f"WARNING: Invalid norm={norm} in calculate_wall_axis")
+        print(f"  longer_segment: {longer_segment}")
+        print(f"  shorter_segment: {shorter_segment}")
+        print(f"  direction: {direction}")
+        print(f"  all segments in group: {group}")
+        return None
+
     direction = [direction[0] / norm, direction[1] / norm]
 
     # Calculate the mean distance between the two segments
@@ -991,9 +1001,29 @@ def identify_walls(pointcloud, pointcloud_resolution, minimum_wall_length, minim
     plot_parallel_wall_groups(parallel_groups)
     # plot_segments_with_candidates(facade_wall_candidates)
 
+    # Diagnostic: analyze group sizes
+    group_sizes = [len(group) for group in parallel_groups]
+    print(f"Total parallel groups: {len(parallel_groups)}")
+    print(f"Group sizes: {group_sizes}")
+    print(f"Groups with 1 segment: {sum(1 for size in group_sizes if size == 1)}")
+    print(f"Groups with 2+ segments: {sum(1 for size in group_sizes if size >= 2)}")
+
     wall_axes, wall_thicknesses = [], []
-    for group in parallel_groups:
-        wall_axis, wall_thickness = calculate_wall_axis(group)
+    for i, group in enumerate(parallel_groups):
+        result = calculate_wall_axis(group)
+        if result is None:
+            print(f"Skipping group {i} - calculate_wall_axis returned None")
+            continue
+        wall_axis, wall_thickness = result
+
+        # Additional validation before adding to lists
+        if wall_axis is None or not all(np.isfinite(coord) for point in wall_axis for coord in point):
+            print(f"WARNING: Group {i} produced invalid wall_axis: {wall_axis}")
+            continue
+        if wall_thickness is None or not np.isfinite(wall_thickness):
+            print(f"WARNING: Group {i} produced invalid wall_thickness: {wall_thickness}")
+            continue
+
         wall_axes.append(wall_axis)
         wall_thicknesses.append(wall_thickness)
 

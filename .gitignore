@@ -58,6 +58,8 @@ log.txt
 # Output directories and files
 output_IFC/
 output_xyz/
+input_xyz/
+input_e57/
 *.ifc
 *.xyz
 *.e57

@@ -1,37 +1,47 @@
-e57_input: true
+# ===== INPUT/OUTPUT =====
+e57_input: true # If true, convert E57 to XYZ; if false, use XYZ files directly
 e57_files:
   - C:\Users\zhhnl\OneDrive\_DashBoard\_BIMEngine\PointCloud\454 Natoma St - Nov 6\pointcloud_output_e57.e57
-xyz_files:
+xyz_files: # Output path for converted XYZ or direct XYZ input files
   - output_xyz/454_Natoma_St.xyz
-dilute: false
-dilution_factor: 10
-exterior_scan: false
-pc_resolution: 0.002
-grid_coefficient: 5
+dilute: false # Reduce point density to speed up processing
+dilution_factor: 10 # Keep every Nth point (higher = faster but less accurate)
 
-bfs_thickness: 0.3
-tfs_thickness: 0.4
+# ===== POINT CLOUD PROCESSING =====
+exterior_scan: false # True if scanned from outside; affects wall height calculation
+pc_resolution: 0.02 # Point cloud resolution in meters (typical: 0.002-0.01)
+grid_coefficient: 5 # Grid cell size = pc_resolution × grid_coefficient (affects wall detection granularity)
 
-min_wall_length: 0.10
-min_wall_thickness: 0.05
-max_wall_thickness: 0.75
-exterior_walls_thickness: 0.3
+# ===== SLAB PARAMETERS =====
+bfs_thickness: 0.3 # Bottom floor slab thickness in meters
+tfs_thickness: 0.4 # Top floor slab thickness in meters
 
+# ===== WALL PARAMETERS =====
+min_wall_length: 0.30 # Minimum wall length in meters (filters noise)
+min_wall_thickness: 0.05 # Minimum wall thickness in meters
+max_wall_thickness: 0.75 # Maximum wall thickness in meters
+exterior_walls_thickness: 0.3 # Default thickness for exterior walls in meters
+
+# ===== IFC OUTPUT =====
 output_ifc: output_IFC/454_Natoma_St.ifc
 ifc_project_name: 454 Natoma St
 ifc_project_long_name: Point Cloud to BIM Conversion
 ifc_project_version: version 1.0
 
+# ===== IFC AUTHORSHIP =====
 ifc_author_name: User
 ifc_author_surname: Name
 ifc_author_organization: Organization
 
+# ===== IFC BUILDING INFO =====
 ifc_building_name: 454 Natoma St
 ifc_building_type: Building
 ifc_building_phase: As-Built
 
-ifc_site_latitude: [37, 46, 48]
-ifc_site_longitude: [-122, 24, 36]
-ifc_site_elevation: 0.0
+# ===== IFC SITE LOCATION =====
+ifc_site_latitude: [37, 46, 48] # Degrees, minutes, seconds
+ifc_site_longitude: [-122, 24, 36] # Degrees, minutes, seconds
+ifc_site_elevation: 0.0 # Elevation above sea level in meters
 
-material_for_objects: Concrete
+# ===== IFC MATERIALS =====
+material_for_objects: Concrete # Default material for walls and slabs

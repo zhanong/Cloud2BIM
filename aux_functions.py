@@ -908,13 +908,26 @@ def identify_walls(pointcloud, pointcloud_resolution, minimum_wall_length, minim
                    maximum_wall_thickness, z_floor, z_ceiling, grid_coefficient=5, slab_polygon=None,
                    exterior_scan=False, exterior_walls_thickness=0.3):
     x_coords, y_coords, z_coords = zip(*pointcloud)
-    z_section_boundaries = [0.85, 1.2]  # percentage of the height for the storey sections
 
-    # Calculate z-coordinate limits
+    # Calculate z-coordinate limits for wall detection
+    # Strategy: Extract 20% of storey height at optimal elevation
+    # - For tall storeys: start at 2m height (typical wall/window level)
+    # - For short storeys: take top 20% of available height
     z_max_in_point_cloud = np.max(z_coords)
     z_min_in_point_cloud = np.min(z_coords)
-    z_max = z_min_in_point_cloud + z_section_boundaries[1] * (z_max_in_point_cloud - z_min_in_point_cloud)
-    z_min = z_min_in_point_cloud + z_section_boundaries[0] * (z_max_in_point_cloud - z_min_in_point_cloud)
+    storey_height = z_max_in_point_cloud - z_min_in_point_cloud
+    target_range = 0.2 * storey_height  # Always extract 20% of storey height
+
+    if (2.0 + target_range) <= storey_height:
+        # Tall storey: start at 2m above floor
+        z_min = z_min_in_point_cloud + 2.0
+        z_max = z_min + target_range
+    else:
+        # Short storey: take top 20%
+        z_max = z_max_in_point_cloud
+        z_min = z_max - target_range
+
+    print(f"Wall detection using Z-range: {z_min:.2f}m to {z_max:.2f}m (storey height: {storey_height:.2f}m)")
 
     # Filter points based on z-coordinate limits
     filtered_indices = [i for i, z in enumerate(z_coords) if z_min <= z <= z_max]
